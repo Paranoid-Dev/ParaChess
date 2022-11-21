@@ -1,22 +1,28 @@
 #include <stdio.h>
+#include<stdlib.h>
 
 int board[8][8];
+int *board_future[8][8]; // board[a][b][n]
+int depth=3;
 
-int pawn_white=80;
-int rook_white=82;
-int knight_white=78;
-int bishop_white=66;
-int queen_white=81;
-int king_white=75;
-int pawn_black=112;
-int rook_black=114;
-int knight_black=110;
-int bishop_black=98;
-int queen_black=113;
-int king_black=107;
+const int pawn_white=80;
+const int rook_white=82;
+const int knight_white=78;
+const int bishop_white=66;
+const int queen_white=81;
+const int king_white=75;
+const int pawn_black=112;
+const int rook_black=114;
+const int knight_black=110;
+const int bishop_black=98;
+const int queen_black=113;
+const int king_black=107;
+const int blank=48;
 
 void initialize_board();
 void print_board();
+void initialize_future_board_arr();
+void move_piece(int a, int b, int c, int d); //move (a,b) to (c,d)
 
 void initialize_board() {
 	board[0][0]=rook_white;
@@ -55,7 +61,15 @@ void initialize_board() {
 	
 	for (int i=0;i<8;++i) {
 		for (int j=2;j<6;++j) {
-			board[i][j]=48;
+			board[i][j]=blank;
+		}
+	}
+}
+
+void initialize_future_board_arr() {
+	for (int i = 0; i < 8; i++) {
+		for (int j = 0; j < 8; j++) {
+			board_future[i][j] = (int*)calloc(depth, sizeof(int));
 		}
 	}
 }
@@ -69,8 +83,17 @@ void print_board () {
 	}
 }
 
+void move_piece(int a, int b, int c, int d) {
+	board[c][d]=board[a][b];
+	board[a][b]=blank;
+}
+
 int main() {
 	initialize_board();
+	print_board();
+	int a_scan, b_scan, c_scan, d_scan;
+	scanf("%d %d %d %d", &a_scan, &b_scan, &c_scan, &d_scan);
+	move_piece(a_scan, b_scan, c_scan, d_scan);
 	print_board();
 	return 0;
 }
