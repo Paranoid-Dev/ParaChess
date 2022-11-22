@@ -109,25 +109,48 @@ int get_next_moves() {
 	int n=0;
 	for (int i = 0; i < 8; ++i) {
 		for (int j = 0; j < 8; ++j) {
+			if (board[i][j] == pawn_white_enpassant_capturable) {
+				board[i][j]=pawn_white;
+			}
 			if (board[i][j] == pawn_white) { //if white pawn
 				if (board[i][j+1] == blank) { //go ahead 1 square
 					board_future[i][j][n]=blank;
-					board_future[i][j+1][n]=pawn_white;
+					if (j==2) {
+						board_future[i][j+1][n]=pawn_white_enpassant_capturable;
+					}
+					else {
+						board_future[i][j+1][n]=pawn_white;
+					}
 					n++;
 				}
 				if (board[i][j+1] == blank && board[i][j+2] == blank) { //go ahead 2 squares
 					board_future[i][j][n]=blank;
-					board_future[i][j+2][n]=pawn_white;
+					if (j==1) {
+						board_future[i][j+2][n]=pawn_white_enpassant_capturable;
+					}
+					else {
+						board_future[i][j+2][n]=pawn_white;
+					}
 					n++;
 				}
 				if (i > 0 && j < 7 && board[i-1][j+1] != blank && board[i-1][j+1] > 90) { //if can take left diagonally
 					board_future[i][j][n]=blank;
-					board_future[i-1][j+1][n]=pawn_white;
+					if (j==2) {
+						board_future[i-1][j+1][n]=pawn_white_enpassant_capturable;
+					}
+					else {
+						board_future[i-1][j+1][n]=pawn_white;
+					}
 					n++;
 				}
 				if (i < 7 && j < 7 && board[i+1][j+1] != blank && board[i+1][j+1] > 90) { //if can take right diagonally
 					board_future[i][j][n]=blank;
-					board_future[i+1][j+1][n]=pawn_white;
+					if (j==2) {
+						board_future[i+1][j+1][n]=pawn_white_enpassant_capturable;
+					}
+					else {
+						board_future[i+1][j+1][n]=pawn_white;
+					}
 					n++;
 				}
 				if (j == 4 && i > 0 && board[i-1][j] == pawn_black_enpassant_capturable) { //if can take left en passant
