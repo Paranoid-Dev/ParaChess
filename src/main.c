@@ -2,8 +2,8 @@
 #include <stdlib.h>
 
 int board[8][8];
-int *board_future[8][8]; // board[a][b][n]
-int *board_move[5]; // board_move[x][n]={prev_n abcd,n}
+long long int *board_future[8][8]; // board[a][b][n]
+long long int *board_move[5]; // board_move[x][n]={prev_n abcd,n}
 int depth=3;
 long long int n=0;
 
@@ -33,7 +33,7 @@ void print_board();
 void initialize_future_board_arr(int s);
 void free_future_board_arr();
 void move_piece(int a, int b, int c, int d); //move (a,b) to (c,d)
-int get_next_moves(long long int prev_n); // n=-1 for first iter
+long long int get_next_moves(long long int prev_n); // n=-1 for first iter
 
 void initialize_board() {
 	board[0][0]=rook_white;
@@ -80,11 +80,11 @@ void initialize_board() {
 void initialize_future_board_arr(int s) {
 	for (int i = 0; i < 8; i++) {
 		for (int j = 0; j < 8; j++) {
-			board_future[i][j] = (int*)calloc(s, sizeof(int));
+			board_future[i][j] = (long long int*)calloc(s, sizeof(long long int));
 		}
 	}
 	for (int i = 0; i < 5; i++) {
-		board_move[i] = (int*)calloc(s, sizeof(int));
+		board_move[i] = (long long int*)calloc(s, sizeof(long long int));
 	}
 	n=0;
 }
@@ -115,7 +115,7 @@ void move_piece(int a, int b, int c, int d) {
 	board[a][b]=blank;
 }
 
-int get_next_moves(long long int prev_n) {
+long long int get_next_moves(long long int prev_n) {
 	for (int i = 0; i < 8; ++i) {
 		for (int j = 0; j < 8; ++j) {
 			if (board[i][j] == pawn_white_enpassant_capturable) {
