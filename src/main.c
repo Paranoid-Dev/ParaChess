@@ -3,7 +3,9 @@
 
 int board[8][8];
 int *board_future[8][8]; // board[a][b][n]
+int *board_move[5]; // board_move[x][n]={prev_n abcd,n}
 int depth=3;
+long long int n=0;
 
 //white : 66~85
 const int pawn_white=80;
@@ -31,7 +33,7 @@ void print_board();
 void initialize_future_board_arr(int s);
 void free_future_board_arr();
 void move_piece(int a, int b, int c, int d); //move (a,b) to (c,d)
-int get_next_moves();
+int get_next_moves(long long int prev_n); // n=-1 for first iter
 
 void initialize_board() {
 	board[0][0]=rook_white;
@@ -81,6 +83,10 @@ void initialize_future_board_arr(int s) {
 			board_future[i][j] = (int*)calloc(s, sizeof(int));
 		}
 	}
+	for (int i = 0; i < 5; i++) {
+		board_move[i] = (int*)calloc(s, sizeof(int));
+	}
+	n=0;
 }
 
 void free_future_board_arr() {
@@ -89,6 +95,10 @@ void free_future_board_arr() {
 			free(board_future[i][j]);
 		}
 	}
+	for (int i = 0; i < 5; i++) {
+		free(board_move[i]);
+	}
+	n=0;
 }
 
 void print_board () {
@@ -105,8 +115,7 @@ void move_piece(int a, int b, int c, int d) {
 	board[a][b]=blank;
 }
 
-int get_next_moves() {
-	int n=0;
+int get_next_moves(long long int prev_n) {
 	for (int i = 0; i < 8; ++i) {
 		for (int j = 0; j < 8; ++j) {
 			if (board[i][j] == pawn_white_enpassant_capturable) {
@@ -121,6 +130,11 @@ int get_next_moves() {
 					else {
 						board_future[i][j+1][n]=pawn_white;
 					}
+					board_move[0][n]=prev_n;
+					board_move[1][n]=i;
+					board_move[2][n]=j;
+					board_move[3][n]=i;
+					board_move[4][n]=j+1;
 					n++;
 				}
 				if (board[i][j+1] == blank && board[i][j+2] == blank) { //go ahead 2 squares
@@ -131,6 +145,11 @@ int get_next_moves() {
 					else {
 						board_future[i][j+2][n]=pawn_white;
 					}
+					board_move[0][n]=prev_n;
+					board_move[1][n]=i;
+					board_move[2][n]=j;
+					board_move[3][n]=i;
+					board_move[4][n]=j+2;
 					n++;
 				}
 				if (i > 0 && j < 7 && board[i-1][j+1] != blank && board[i-1][j+1] > 90) { //if can take left diagonally
@@ -141,6 +160,11 @@ int get_next_moves() {
 					else {
 						board_future[i-1][j+1][n]=pawn_white;
 					}
+					board_move[0][n]=prev_n;
+					board_move[1][n]=i;
+					board_move[2][n]=j;
+					board_move[3][n]=i-1;
+					board_move[4][n]=j+1;
 					n++;
 				}
 				if (i < 7 && j < 7 && board[i+1][j+1] != blank && board[i+1][j+1] > 90) { //if can take right diagonally
@@ -151,16 +175,31 @@ int get_next_moves() {
 					else {
 						board_future[i+1][j+1][n]=pawn_white;
 					}
+					board_move[0][n]=prev_n;
+					board_move[1][n]=i;
+					board_move[2][n]=j;
+					board_move[3][n]=i+1;
+					board_move[4][n]=j+1;
 					n++;
 				}
 				if (j == 4 && i > 0 && board[i-1][j] == pawn_black_enpassant_capturable) { //if can take left en passant
 					board_future[i][j][n]=blank;
 					board_future[i-1][j+1][n]=pawn_white;
+					board_move[0][n]=prev_n;
+					board_move[1][n]=i;
+					board_move[2][n]=j;
+					board_move[3][n]=i-1;
+					board_move[4][n]=j+1;
 					n++;
 				}
 				if (j == 4 && i < 7 && board[i+1][j] == pawn_black_enpassant_capturable) { //if can take right en passant
 					board_future[i][j][n]=blank;
 					board_future[i+1][j+1][n]=pawn_white;
+					board_move[0][n]=prev_n;
+					board_move[1][n]=i;
+					board_move[2][n]=j;
+					board_move[3][n]=i+1;
+					board_move[4][n]=j+1;
 					n++;
 				}
 			}
